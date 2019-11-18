@@ -81,7 +81,7 @@ class FormulaParser {
         //while (!pin.nextLine().contains("Prelude"));
     }
 
-    fun parseFormula(formula: String): Any {
+    fun parseFormula(formula: String): Quantity {
         println("ohayo")
         pout.println("putStrLn $ json $ ${prepareFormula(formula)}")
         pout.flush()

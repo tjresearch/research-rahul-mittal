@@ -12,8 +12,20 @@ fun main() {
     while (true) {
         print("Enter stuff (<<<>><>): ")
         val sentence = readLine()!!
-        val tokens = sentence.replace(Regex("[\\.,;:]"), "").toLowerCase().split(" ")
-        println("statement = ${parseStatement(tokens)}")
+        var letter = 'a'
+        val formulae = mutableMapOf<Char, Quantity>()
+        val builder = StringBuilder()
+        var j = 0
+        val formulaParser = FormulaParser()
+        while (j < sentence.length) {
+            if (sentence[j] == '$') {
+                builder.append(letter)
+                formulae[letter] = formulaParser.parseFormula(
+                    sentence.substring(j + 1, sentence.indexOf('$', j + 1)))
+            }
+        }
+        val tokens = builder.toString().replace(Regex("[\\.,;:]"), "").toLowerCase().split(" ")
+        println("statement = ${parseStatement(tokens, formulae)}")
     }
 }
 

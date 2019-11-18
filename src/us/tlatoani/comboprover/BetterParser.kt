@@ -83,7 +83,7 @@ data class ParsePosition<S>(
     val parameters: TemplateParameters
 )
 
-fun parseStatement(tokens: List<String>): Statement? {
+fun parseStatement(tokens: List<String>, formulae: Map<Char, Quantity>): Statement? {
     val n = tokens.size
     val dpStatements = Array(n) { Array<ParseResult<Statement>?>(n + 1) { null } }
     val dpQuantities = Array(n) { Array<ParseResult<Quantity>?>(n + 1) { null } }
@@ -102,7 +102,7 @@ fun parseStatement(tokens: List<String>): Statement? {
             // formula
             if (y - x == 1) {
                 if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
-                    dpQuantities[x][y] = ParseResult(0, Formula(tokens[x]))
+                    dpQuantities[x][y] = ParseResult(0, formulae.getValue(tokens[x][0]))
                 }
             }
             // arbitrary math object
