@@ -1,0 +1,16 @@
+For all g, h is true.
+
+QUESTION: We will show that both sides of the equation count the number of ways to choose a non-empty subset of the set s.
+
+RIGHT: As in the last proof, the number of subsets of s is c.
+Exactly one of these is empty, so there are g non-empty subsets.
+
+LEFT: We will show that the left hand side counts the desired quantity by conditioning on the largest element of the subset.
+Every non-empty subset has a largest element k where j is true.
+
+Let j be true.
+We will count the number of subsets of s having largest element k.
+Such a subset includes k and does not include d.
+Therefore, to specify such a subset, we must decide j choices: for each element of g, we must decide to include or not include that element.
+Therefore, there are g such subsets.
+Summing over all possible k, we see that the left hand side counts the desired quantity.

@@ -1,0 +1,14 @@
+For all g, h is true.
+
+QUESTION: We will show that both sides of the equation count the number of ways to choose a subset of a set S of n elements.
+
+RIGHT: When creating a subset of s, for each element of s, there are two options: to include it or not to include it.
+Since we make this choice 3 times (once for each element), there are a total of h possible sequences of choices.
+Each sequence gives exactly one subset, and every subset results from exactly one sequence.
+Therefore, there are a total of m subsets of s.
+Therefore, the right hand side counts the desired quantity.
+
+LEFT: We will show that the left hand side counts the desired quantity by conditioning on the size of the subset.
+The possible sizes of subsets of s are h.
+By definition, there are 􏰀n􏰁 subsets of size k.
+Therefore, the total number of subsets is the sum on the left hand side.

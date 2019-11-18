@@ -1,0 +1,10 @@
+Theorem: For integers ((b,u)) such that ((b * u)),
+the amount of ways to place "b" labelled balls into "u" labelled urns
+such that each urn contains at most one ball is "factorial u" divided by ((factorial (u - b))).
+
+Proof: We can choose ((b)) urns which will contain a ball in ((b * u)) ways,
+and the balls can be matched up with the urns in ((b)) factorial ways,
+making the total amount
+(((u >> b) * factorial b
+= (factorial u / (factorial b * factorial (u - b))) * factorial b
+= factorial u / factorial (u - b))).

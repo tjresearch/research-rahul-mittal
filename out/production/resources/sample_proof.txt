@@ -1,0 +1,10 @@
+Theorem: For integers b,u such that bu,
+the amount of ways to place b labelled balls into u labelled urns
+such that each urn contains at most one ball is u factorial divided by u - b factorial.
+
+Proof: We can choose b urns which will contain a ball in bu ways,
+and the balls can be matched up with the urns in b factorial ways,
+making the total amount
+(u choose b) times b factorial
+= u factorial divided by (b factorial times u - b factorial) times b factorial
+= u factorial divided by u - b factorial.

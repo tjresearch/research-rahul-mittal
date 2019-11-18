@@ -1,0 +1,19 @@
+Theorem 2: For all g, h is equal to j is equal to k.
+
+QUESTION: We will show that both sides of the equation count the number of ways to choose a subset of size k from a set s of size n.
+LEFT: The left hand side of the equation counts this by definition.
+RIGHT: Let s be a fixed element.
+We will show that the right hand side counts the desired quantity by conditioning on whether s is in the subset.
+
+First, we will count how many subsets of size k include s.
+Since such a subset includes s, there are g other elements in the subset, which must be chosen from the remaining h elements of j.
+Therefore there are 􏰀h􏰁 such subsets.
+
+Second, we will count how many subsets of size k do not include s.
+Since the subset does not include s, all of its k elements are chosen from the remaining h elements of j.
+Therefore there are h􏰁 such subsets.
+
+Since any subset of size k either includes s or does not (but not both), the total number of subsets is the sum of the counts in the two cases.
+
+Since any subset of size k either includes s or does not, the total number of subsets is the sum of the counts in the two cases.
+Since any subset of size k either includes s or does not include s, the total number of subsets is the sum of the counts in the two cases.

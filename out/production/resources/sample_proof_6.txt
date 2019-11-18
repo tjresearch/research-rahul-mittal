@@ -1,0 +1,11 @@
+We can choose b urns, which will contain a ball, in c ways.
+we can choose b urns which will contain a ball in c ways
+
+
+We can choose XN1 in QQ1 ways => Equals(Amount(Choice(xn[1])), qq[1])
+
+Equals(
+    q1=Amount(obj=Choice(noun=SubjectToCondition(
+        obj=ArbitraryMathObject(noun=urns),
+        condition=Contains(elem=ArbitraryMathObject(noun=ball))))),
+    q2=Formula(placeholder=c))

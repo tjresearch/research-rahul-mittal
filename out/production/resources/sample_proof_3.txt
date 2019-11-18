@@ -1,0 +1,17 @@
+Theorem: The amount of ways to place "b" labelled balls into "u" labelled urns, where "b,u" are integers and "b <= u"",
+such that each urn contains at most one ball is "factorial u" divided by "factorial (u - b)".
+
+Proof: We can choose "b" urns which will contain a ball in "b * u" ways,
+and the balls can be matched up with the urns in b factorial ways.
+Therefore, the total amount is
+"(u >> b) * factorial b
+= (factorial u / (factorial b * factorial (u - b))) * factorial b
+= factorial u / factorial (u - b)".
+
+Therefore, the total amount is "(u >> b) * factorial b = (factorial u / (factorial b * factorial (u - b))) * factorial b = factorial u / factorial (u - b)".
+
+Therefore, the total amount is f.
+
+Theorem: The amount of ways to place g labelled balls into b labelled urns, where c and d are integers and Formula 1 is true, such that each urn contains at most one ball, is e.
+
+Theorem: The amount of ways to place g labelled balls into b labelled urns, where c are integers and d is true, such that each urn contains at most one ball, is e.

@@ -1,0 +1,8 @@
+Theorem: For all integers "n, k" such that "n >= k >= 0", "n >> k = n >> (n - k)".
+
+Proof: We will show that both sides of the equation count the number of ways to choose a subset of size "k" from a set of size "n".
+The left hand side of the equation counts this by definition.
+Now we consider the right hand side.
+To choose a subset of size g, we can instead choose the h elements to exclude from the subset.
+There are n 􏰁ways to do this.
+Therefore the right hand side also counts the desired h quantity.
