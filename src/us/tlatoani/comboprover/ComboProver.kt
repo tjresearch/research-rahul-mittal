@@ -37,7 +37,6 @@ fun main() {
         println("tokens = $tokens")
         println("formulae = $formulae")
         val output = parseStatement(tokens, formulae).toString()
-        j = 0
         var indentation = 0
         for (k in 0 until output.length) {
             if (output[k] == ')') {
