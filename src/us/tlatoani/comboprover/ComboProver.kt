@@ -8,23 +8,60 @@ import java.util.*
 val SAMPLE_PROOF_FILENAME = "sample_proof_4.txt"
 lateinit var pipeline: StanfordCoreNLP
 
+const val PLACEHOLDERS = "bcdeghjklmnopqrstuvwxyz"
+
 fun main() {
     while (true) {
         print("Enter stuff (<<<>><>): ")
         val sentence = readLine()!!
-        var letter = 'a'
+        var k = 0
         val formulae = mutableMapOf<Char, Quantity>()
         val builder = StringBuilder()
         var j = 0
         val formulaParser = FormulaParser()
         while (j < sentence.length) {
             if (sentence[j] == '$') {
-                builder.append(letter)
-                formulae[letter] = formulaParser.parseFormula(
-                    sentence.substring(j + 1, sentence.indexOf('$', j + 1)))
+                builder.append(PLACEHOLDERS[k])
+                val end = sentence.indexOf('$', j + 1)
+                formulae[PLACEHOLDERS[k]] = formulaParser.parseFormula(
+                    sentence.substring(j + 1, end))
+                j = end + 1
+                k++
+            } else {
+                builder.append(sentence[j])
+                j++
             }
         }
+        println("bosh")
         val tokens = builder.toString().replace(Regex("[\\.,;:]"), "").toLowerCase().split(" ")
+        println("tokens = $tokens")
+        println("formulae = $formulae")
+        val output = parseStatement(tokens, formulae).toString()
+        j = 0
+        var indentation = 0
+        for (k in 0 until output.length) {
+            if (output[k] == ')') {
+                indentation--
+                println()
+                for (l in 1..indentation) {
+                    print("    ")
+                }
+            }
+            print(output[k])
+            if (output[k] == '(') {
+                indentation++
+                println()
+                for (l in 1..indentation) {
+                    print("    ")
+                }
+            }
+            if (output[k] == ',') {
+                println()
+                for (l in 1..indentation) {
+                    print("    ")
+                }
+            }
+        }
         println("statement = ${parseStatement(tokens, formulae)}")
     }
 }

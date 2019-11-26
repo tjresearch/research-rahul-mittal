@@ -56,23 +56,37 @@ val STATEMENT_TEMPLATES = listOf<SyntaxTemplate<Statement>>(
     template("we can choose %xn1% in %qq1% ways") { Equals(Amount(Choice(it.xn(1))), it.qq(1)) },
     template("%xn1% can be matched up with %xn2% in %qq1% ways") { Equals(Amount(Matching(it.xn(1), it.xn(2))), it.qq(1)) },
     template("%qq1% is %qq2%") { Equals(it.qq(1), it.qq(2)) },
-    template("each %xn1% contains %xn2%") { Each(it.xn(1), Contains(it.xn(2))) }
+    template("each %xn1% contains %xn2%") { Each(it.xn(1), Contains(it.xn(2))) },
+    template("to choose %xn1% we can choose %xn2%") { Equals(Amount(Choice(it.xn(1))), Amount(Choice(it.xn(2)))) },
+    template("there are %qq1% %xn1%") { Equals(Amount(it.xn(1)), it.qq(1)) },
+    template("%qq1% counts %qq2%") { Equals(it.qq(1), it.qq(2)) },
+    template("%xn1% contains %xn2%") { Satisfies(it.xn(1), Contains(it.xn(2))) },
+    template("%xn1% includes %xn2%") { Satisfies(it.xn(1), Contains(it.xn(2))) },
+    template("there are %qq1% other elements in %xn2%") { Equals(it.qq(1), Amount(RemainingElements(it.xn(1)))) },
+    template("%xn1% must be chosen from %xn2%") { Satisfies(it.xn(2), Contains(it.xn(1))) }
 )
 val QUANTITY_TEMPLATES = listOf<SyntaxTemplate<Quantity>>(
     template("number of %xn1%") { Amount(it.xn(1)) },
     template("amount of %xn1%") { Amount(it.xn(1)) },
     template("amount") { HangingAmount(Unit) },
     template("at most %qq1%") { Bounded(Infinity(-1), it.qq(1)) },
-    template("at least %qq1%") { Bounded(it.qq(1), Infinity(1)) }
+    template("at least %qq1%") { Bounded(it.qq(1), Infinity(1)) },
+    template("right side") { SideOfEquation(Side.RIGHT) },
+    template("left side") { SideOfEquation(Side.LEFT) },
+    template("desired quantity") { HangingAmount(Unit) }
 )
 val MATH_OBJECT_TEMPLATES = listOf<SyntaxTemplate<MathObject>>(
     template("%qq1% %xn1%") { Multiple(it.qq(1), it.xn(1)) },
     template("%xn1% which will contain %xn2%") { SubjectToCondition(it.xn(1), Contains(it.xn(2))) },
     template("labelled %xn1%") { LabelledMathObject(it.xn(1)) },
-    template("ways to place %xn1% into %xn2%") { Placement(it.xn(1), it.xn(2)) }
+    template("ways to place %xn1% into %xn2%") { Placement(it.xn(1), it.xn(2)) },
+    template("%xn1% to exclude from %xn2%") { ForPurpose(it.xn(1), Not(Satisfies(it.xn(2), Contains(it.xn(1))))) },
+    template("%xn1% of size %qq1%") { OfSize(it.xn(1), it.qq(1)) },
+    template("ways to do this") { HangingWays(Unit) },
+    template("remaining elements of %xn1%") { RemainingElements(it.xn(1)) }
 )
 
-val ARBITRARY_MATH_OBJECT_WORDS = listOf("ball", "balls", "urn", "urns")
+val ARBITRARY_MATH_OBJECT_WORDS = listOf("ball", "urn", "subset")
 
 data class ParseResult<out S>(val unusedWords: Int, val s: S)
 data class ParsePosition<S>(
@@ -96,19 +110,19 @@ fun parseStatement(tokens: List<String>, formulae: Map<Char, Quantity>): Stateme
             // formula statement
             if (y - x == 3) {
                 if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i" && tokens[x + 1] == "is" && tokens[x + 2] == "true") {
-                    dpStatements[x][y] = ParseResult(0, FormulaStatement(tokens[x]))
+                    dpStatements[x][y] = ParseResult(0, ParsedStatement(FormulaStatement(tokens[x]), ParseContext(x, y)))
                 }
             }
             // formula
             if (y - x == 1) {
                 if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
-                    dpQuantities[x][y] = ParseResult(0, formulae.getValue(tokens[x][0]))
+                    dpQuantities[x][y] = ParseResult(0, ParsedQuantity(formulae.getValue(tokens[x][0]), ParseContext(x, y)))
                 }
             }
             // arbitrary math object
             if (y - x == 1) {
-                if (ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x])) {
-                    dpMathObjects[x][y] = ParseResult(0, ArbitraryMathObject(tokens[x]))
+                if (ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x]) || (tokens[x].endsWith("s") && ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x].substringBeforeLast("s")))) {
+                    dpMathObjects[x][y] = ParseResult(0, ParsedMathObject(ArbitraryMathObject(tokens[x]), ParseContext(x, y)))
                 }
             }
             // dfs

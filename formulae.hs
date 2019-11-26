@@ -1,6 +1,7 @@
 import Data.List (intercalate)
 
 data Formula = Constant Integer | Variable Char | Sum [Formula] | Product [Formula] | Combination Formula Formula | Factorial Formula | Difference Formula Formula | Quotient Formula Formula deriving Show
+--data Statement = EndStatement Formula | Formula <<< Statement | Formula <<<=== Statement | Formula === Statement | Formula >>>=== Statement | Formula >>> Statement
 
 Sum xs +++ b = Sum (xs ++ [b])
 a +++ Sum ys = Sum (a:ys)
@@ -10,7 +11,7 @@ Product xs *** b = Product (xs ++ [b])
 a *** Product ys = Product (a:ys)
 a *** b = Product [a, b]
 
-(>>) = Combination
+(>>>>>>) = Combination
 fact = Factorial
 
 jsonObject tp ps = "{\"type\": \"" ++ tp ++ "\", " ++ intercalate ", " ["\"" ++ key ++ "\": " ++ value | (key, value) <- ps] ++ "}"

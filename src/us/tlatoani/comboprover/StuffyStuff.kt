@@ -9,6 +9,7 @@ sealed class Statement: MathThing()
 data class Not(val negated: Statement): Statement()
 data class FormulaStatement(val placeholder: String): Statement()
 data class Each(val obj: MathObject, val attribute: Attribute): Statement()
+data class Satisfies(val obj: MathObject, val attribute: Attribute): Statement()
 
 sealed class Quantity: MathThing()
 
@@ -33,6 +34,7 @@ data class Placement(val of: MathObject, val into: MathObject): MathObject()
 data class SubjectToCondition(val obj: MathObject, val condition: Attribute): MathObject()
 data class ForPurpose(val obj: MathObject, val condition: Statement): MathObject()
 data class Multiple(val amount: Quantity, val obj: MathObject): MathObject()
+data class OfSize(val obj: MathObject, val size: Quantity): MathObject()
 
 sealed class Attribute
 
@@ -52,6 +54,8 @@ data class Combination(val n: Quantity, val k: Quantity): Quantity()
 // Hanging Stuff
 
 data class HangingAmount(val unit: Unit): Quantity()
+data class HangingWays(val unit: Unit): MathObject()
+data class RemainingElements(val of: MathObject): MathObject()
 
 // Parsed Stuff
 
@@ -63,3 +67,8 @@ data class ParsedMathObject(val mathObject: MathObject, val context: ParseContex
 
 data class Infinity(val sign: Int): Quantity()
 data class Bounded(val left: Quantity, val right: Quantity): Quantity()
+
+// Sides
+
+enum class Side { LEFT, RIGHT }
+data class SideOfEquation(val side: Side): Quantity()

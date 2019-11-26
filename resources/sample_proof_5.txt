@@ -1,6 +1,8 @@
 Theorem: The amount of ways to place "b" labelled balls into "u" labelled urns, where "b,u" are integers and "b <= u",
 such that each urn contains at most one ball, is "factorial u" divided by "factorial (u - b)".
 
+The amount of ways to place $b$ labelled balls into $u$ labelled urns is $fact u / fact (u - b)$.
+
 Proof: We can choose "b" urns which will contain a ball in "b * u" ways,
 and the balls can be matched up with the urns in b factorial ways, so the total amount is
 "(u >> b) * factorial b
@@ -8,3 +10,5 @@ and the balls can be matched up with the urns in b factorial ways, so the total 
 = factorial u / factorial (u - b)".
 
 Proof: We can choose b urns which will contain a ball in c ways, and the balls can be matched up with the urns in d ways, so the total amount is g.
+
+We can choose $b$ urns which will contain a ball in $b >> u$ ways.

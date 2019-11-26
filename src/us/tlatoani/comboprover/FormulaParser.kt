@@ -82,8 +82,10 @@ class FormulaParser {
     }
 
     fun parseFormula(formula: String): Quantity {
-        println("ohayo")
-        pout.println("putStrLn $ json $ ${prepareFormula(formula)}")
+        println("ohayo $formula")
+        val prepared = prepareFormula(formula)
+        println("PREPÁRATTÈ $prepared")
+        pout.println("putStrLn $ json $ ${prepared}")
         pout.flush()
         println("gozaimasu")
         /*while (pin.hasNext()) {
@@ -97,7 +99,7 @@ class FormulaParser {
 }
 
 fun jsonToQuantity(json: Any): Quantity = when (json) {
-    is Int -> Constant(json.toLong())
+    is Number -> Constant(json.toLong())
     is String -> Variable(json)
     is JSONObject -> when ((json["type"] as String).toLowerCase()) {
         "sum" -> Sum((json["addends"] as JSONArray).map { elem -> jsonToQuantity(elem!!) })
@@ -105,7 +107,7 @@ fun jsonToQuantity(json: Any): Quantity = when (json) {
         "difference" -> Difference(jsonToQuantity(json["left"]!!), jsonToQuantity(json["right"]!!))
         "quotient" -> Quotient(jsonToQuantity(json["top"]!!), jsonToQuantity(json["bottom"]!!))
         "factorial" -> Factorial(jsonToQuantity(json["of"]!!))
-        "combination" -> Combination(jsonToQuantity(json["top"]!!), jsonToQuantity(json["bottom"]!!))
+        "choose" -> Combination(jsonToQuantity(json["top"]!!), jsonToQuantity(json["bottom"]!!))
         else -> throw IllegalArgumentException("Invalid type ${json["type"]}")
     }
     else -> throw IllegalArgumentException("Has to be json1!!1!1!! not json: $json")
