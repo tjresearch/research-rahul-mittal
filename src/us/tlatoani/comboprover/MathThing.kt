@@ -4,14 +4,13 @@ import edu.stanford.nlp.trees.Tree
 
 sealed class MathThing
 
-sealed class Statement: MathThing()
+open class Statement: MathThing()
 
 data class Not(val negated: Statement): Statement()
 data class FormulaStatement(val placeholder: String): Statement()
-data class Each(val obj: MathObject, val attribute: Attribute): Statement()
-data class Satisfies(val obj: MathObject, val attribute: Attribute): Statement()
+data class Each(val obj: MathObject, val condition: (MathObject) -> Statement): Statement()
 
-sealed class Quantity: MathThing()
+open class Quantity: MathThing()
 
 data class Equals(val q1: Quantity, val q2: Quantity): Statement()
 
@@ -19,26 +18,38 @@ data class Formula(val placeholder: String): Quantity()
 
 data class LessThan(val lesser: Quantity, val greater: Quantity): Statement()
 
+data class Size(val of: MathObject): Quantity()
+
 data class Amount(val obj: MathObject): Quantity()
 
-sealed class MathObject: MathThing()
+open class MathObject: MathThing()
 
 data class Matching(val n1: MathObject, val n2: MathObject): MathObject()
 data class Choice(val noun: MathObject): MathObject()
+data class ChoiceFrom(val of: MathObject, val from: MathObject): MathObject()
 
 data class UnknownNoun(val noun: Tree): Quantity()
 
 data class ArbitraryMathObject(val noun: String): MathObject()
 data class LabelledMathObject(val obj: MathObject): MathObject()
 data class Placement(val of: MathObject, val into: MathObject): MathObject()
-data class SubjectToCondition(val obj: MathObject, val condition: Attribute): MathObject()
-data class ForPurpose(val obj: MathObject, val condition: Statement): MathObject()
+data class SubjectToCondition(val obj: MathObject, val condition: (MathObject) -> Statement): MathObject()
+data class ForPurpose(val obj: MathObject, val condition: (MathObject) -> Statement): MathObject()
 data class Multiple(val amount: Quantity, val obj: MathObject): MathObject()
 data class OfSize(val obj: MathObject, val size: Quantity): MathObject()
+data class Element(val of: MathObject): MathObject()
 
-sealed class Attribute
+data class ObjectEquals(val obj1: MathObject, val obj2: MathObject): Statement()
 
-data class Contains(val elem: MathObject): Attribute()
+data class Largest(val obj: MathObject): MathObject()
+
+// Qualified
+
+data class Qualified(val obj: MathObject, val qualification: Statement): MathObject()
+
+// Contains
+
+data class Contains(val container: MathObject, val elem: MathObject): Statement()
 
 // Formula Stuff
 
@@ -56,12 +67,7 @@ data class Combination(val n: Quantity, val k: Quantity): Quantity()
 data class HangingAmount(val unit: Unit): Quantity()
 data class HangingWays(val unit: Unit): MathObject()
 data class RemainingElements(val of: MathObject): MathObject()
-
-// Parsed Stuff
-
-data class ParsedStatement(val statement: Statement, val context: ParseContext): Statement()
-data class ParsedQuantity(val quantity: Quantity, val context: ParseContext): Quantity()
-data class ParsedMathObject(val mathObject: MathObject, val context: ParseContext): MathObject()
+data class Part(val of: MathObject): MathObject()
 
 // Bounded
 
@@ -72,3 +78,15 @@ data class Bounded(val left: Quantity, val right: Quantity): Quantity()
 
 enum class Side { LEFT, RIGHT }
 data class SideOfEquation(val side: Side): Quantity()
+
+// Intent
+
+open class Intent
+
+data class Show(val statement: Statement): Intent()
+data class Determine(val quantity: Quantity): Intent()
+data class ChooseFor(val choice: MathObject, val forObj: MathObject): Intent()
+
+// Subset
+
+data class Subset(val of: MathObject): MathObject()

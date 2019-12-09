@@ -1,4 +1,4 @@
-package us.tlatoani.comboprover
+package us.tlatoani.comboprover.archive
 
 sealed class Node(val label: String)
 

@@ -7,3 +7,5 @@ class Debug(val message: String) {
         return t
     }
 }
+
+fun <S> List<S>.subList(from: Int) = subList(from, size)

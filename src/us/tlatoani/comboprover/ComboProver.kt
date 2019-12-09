@@ -3,6 +3,7 @@ package us.tlatoani.comboprover
 import edu.stanford.nlp.pipeline.CoreDocument
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
 import edu.stanford.nlp.trees.Tree
+import us.tlatoani.comboprover.better_parser.parseSyntax
 import java.util.*
 
 val SAMPLE_PROOF_FILENAME = "sample_proof_4.txt"
@@ -11,6 +12,14 @@ lateinit var pipeline: StanfordCoreNLP
 const val PLACEHOLDERS = "bcdeghjklmnopqrstuvwxyz"
 
 fun main() {
+    while (true) {
+        print("Enter syntax: ")
+        val sentence = readLine()!!
+        println(parseSyntax(sentence))
+    }
+}
+
+/*fun main4() {
     while (true) {
         print("Enter stuff (<<<>><>): ")
         val sentence = readLine()!!
@@ -63,7 +72,7 @@ fun main() {
         }
         println("statement = ${parseStatement(tokens, formulae)}")
     }
-}
+}*/
 
 /*fun main3() {
     val props = Properties()
@@ -120,7 +129,7 @@ fun main2() {
     }
 }
 
-fun main1() {
+/*fun main1() {
     val props = Properties()
     // set the list of annotators to run
     props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote")
@@ -360,4 +369,4 @@ fun printConstituencyParse(tree: Tree, indentation: String, suffix: String) {
         }
         printConstituencyParse(tree.children().last(), indentation + if (indentation.length % 2 == 0) " | " else " * ", suffix + ")")
     }
-}
+}*/

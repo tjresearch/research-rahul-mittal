@@ -1,4 +1,4 @@
-package us.tlatoani.comboprover
+package us.tlatoani.comboprover.archive
 
 val BIT_AMT = IntArray(65536) { mask ->
     var mTemp = mask
