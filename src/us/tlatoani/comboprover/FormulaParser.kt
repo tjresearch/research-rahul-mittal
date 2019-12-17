@@ -82,18 +82,18 @@ class FormulaParser {
     }
 
     fun parseFormula(formula: String): Quantity {
-        println("ohayo $formula")
+        //println("ohayo $formula")
         val prepared = prepareFormula(formula)
-        println("PREPÁRATTÈ $prepared")
+        //println("PREPÁRATTÈ $prepared")
         pout.println("putStrLn $ json $ ${prepared}")
         pout.flush()
-        println("gozaimasu")
+        //println("gozaimasu")
         /*while (pin.hasNext()) {
             println("here's the next: ${pin.next()}")
         }*/
         //println("line hopefully: ${pin.nextLine()}")
         val jsonStr = pin.nextLine().substring(7)
-        println("jsonStr = $jsonStr")
+        //println("jsonStr = $jsonStr")
         return jsonToQuantity(JSONParser().parse(jsonStr))
     }
 }

@@ -1,9 +1,11 @@
 package us.tlatoani.comboprover
 
-import edu.stanford.nlp.pipeline.CoreDocument
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
-import edu.stanford.nlp.trees.Tree
+import us.tlatoani.comboprover.better_parser.ParseResult
+import us.tlatoani.comboprover.better_parser.parseStatementOrIntent
 import us.tlatoani.comboprover.better_parser.parseSyntax
+import java.io.File
+import java.io.PrintWriter
 import java.util.*
 
 val SAMPLE_PROOF_FILENAME = "sample_proof_4.txt"
@@ -12,6 +14,106 @@ lateinit var pipeline: StanfordCoreNLP
 const val PLACEHOLDERS = "bcdeghjklmnopqrstuvwxyz"
 
 fun main() {
+    print("Enter filename of plaintext proof: input/")
+    val inFilename = "input/" + readLine()!!
+    print("Enter desired output filename: output/")
+    val outFilename = "output/" + readLine()!!
+    val scanner = Scanner(File(inFilename))
+    val proofJoiner = StringJoiner(" ")
+    while (scanner.hasNext()) {
+        val line = scanner.nextLine().trim()
+        if (line.isEmpty()) {
+            proofJoiner.add("\n")
+        } else {
+            proofJoiner.add(line)
+        }
+    }
+    val proof = proofJoiner.toString().replace(" \n ", "\n")
+    val sentences = proof.split(".").toMutableList()
+    val output = mutableListOf<Pair<String, Pair<ParseResult<Statement>?, ParseResult<Intent>?>>>()
+    val formulaParser = FormulaParser()
+    for (rawSentence in sentences) {
+        val sentence = rawSentence.trim()
+        if (sentence.isNotEmpty()) {
+            var k = 0
+            val formulae = mutableMapOf<Char, Quantity>()
+            val builder = StringBuilder()
+            var j = 0
+            while (j < sentence.length) {
+                if (sentence[j] == '$') {
+                    builder.append(PLACEHOLDERS[k])
+                    val end = sentence.indexOf('$', j + 1)
+                    formulae[PLACEHOLDERS[k]] = formulaParser.parseFormula(
+                        sentence.substring(j + 1, end))
+                    j = end + 1
+                    k++
+                } else {
+                    builder.append(sentence[j])
+                    j++
+                }
+            }
+            //println("bosh")
+            val tokens = builder.toString().replace(Regex("[\\.,;:]"), "").toLowerCase().split(" ")
+            //println("tokens = $tokens")
+            //println("formulae = $formulae")
+            output.add(Pair(sentence, parseStatementOrIntent(tokens, formulae)))
+        }
+    }
+    val out = StringBuilder()
+    for (p in output) {
+        val sentence = p.first
+        val parsed = p.second
+        out.appendln("sentence = \"$sentence\"")
+        if (parsed.first == null && parsed.second == null) {
+            out.appendln("Empty sentence")
+        } else if (parsed.first?.unusedWords ?: Int.MAX_VALUE < parsed.second?.unusedWords ?: Int.MAX_VALUE) {
+            out.appendln("unusedWords = ${parsed.first!!.unusedWords}")
+            out.appendln("statement = ${dataStringWithNewlines(parsed.first!!.s.toString())}")
+        } else {
+            out.appendln("unusedWords = ${parsed.second!!.unusedWords}")
+            out.appendln("intent = ${dataStringWithNewlines(parsed.second!!.s.toString())}")
+        }
+        out.appendln()
+    }
+    File(outFilename).printWriter().use { it.print(out) }
+}
+
+fun dataStringWithNewlines(string: String): String {
+    var builder = StringBuilder()
+    var indentation = 0
+    var j = 0
+    while (j < string.length) {
+        val chara = string[j]
+        if (chara == ')') {
+            indentation--
+            builder.append('\n')
+            for (l in 1..indentation) {
+                builder.append("    ")
+            }
+        }
+        builder.append(chara)
+        if (chara == '(') {
+            indentation++
+            builder.append('\n')
+            for (l in 1..indentation) {
+                builder.append("    ")
+            }
+        }
+        if (chara == ',') {
+            builder.append('\n')
+            for (l in 1..indentation) {
+                builder.append("    ")
+            }
+            if (j < string.length - 1 && string[j + 1] == ' ') {
+                j++
+            }
+        }
+        j++
+    }
+    return builder.toString()
+}
+
+fun main5() {
     while (true) {
         print("Enter syntax: ")
         val sentence = readLine()!!

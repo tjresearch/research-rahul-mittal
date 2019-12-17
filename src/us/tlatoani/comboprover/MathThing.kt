@@ -9,6 +9,7 @@ open class Statement: MathThing()
 data class Not(val negated: Statement): Statement()
 data class FormulaStatement(val placeholder: String): Statement()
 data class Each(val obj: MathObject, val condition: (MathObject) -> Statement): Statement()
+data class And(val statement1: Statement, val statement2: Statement): Statement()
 
 open class Quantity: MathThing()
 
@@ -90,3 +91,15 @@ data class ChooseFor(val choice: MathObject, val forObj: MathObject): Intent()
 // Subset
 
 data class Subset(val of: MathObject): MathObject()
+
+// MetaStatement
+
+sealed class MetaStatement: Statement()
+
+data class Since(val reason: Statement, val conclusion: Statement): MetaStatement()
+data class DefineQuantity(val defined: Quantity, val target: Quantity): MetaStatement()
+data class DefineMathObject(val defined: MathObject, val target: MathObject): MetaStatement()
+
+// Variable MathObject
+
+data class ObjectVariable(val name: String): MathObject()

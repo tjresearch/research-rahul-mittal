@@ -14,6 +14,8 @@ data class ParsePosition<S>(
 
 fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
         Pair<ParseResult<Statement>?, ParseResult<Intent>?> {
+    println("tokens = " + tokens.map { s -> "\"$s\"" }.joinToString(", ", "[", "]"))
+    println("formulae = $formulae")
     val n = tokens.size
     val dpStatements = Array(n) { Array<ParseResult<Statement>?>(n + 1) { null } }
     val dpQuantities = Array(n) { Array<ParseResult<Quantity>?>(n + 1) { null } }
@@ -28,19 +30,28 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
             // formula statement
             if (y - x == 3) {
                 if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i" && tokens[x + 1] == "is" && tokens[x + 2] == "true") {
-                    dpStatements[x][y] = ParseResult(0, ParsedStatement(FormulaStatement(tokens[x]), ParseContext(x, y)))
+                    dpStatements[x][y] = ParseResult(0, parsed(FormulaStatement(tokens[x]), ParseContext(x, y)))
                 }
             }
             // formula
             if (y - x == 1) {
                 if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
-                    dpQuantities[x][y] = ParseResult(0, ParsedQuantity(formulae.getValue(tokens[x][0]), ParseContext(x, y)))
+                    dpQuantities[x][y] = ParseResult(0, parsed(formulae.getValue(tokens[x][0]), ParseContext(x, y)))
+                }
+            }
+            // variable math object
+            if (y - x == 1) {
+                if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
+                    val f = formulae.getValue(tokens[x][0])
+                    if (f is Variable) {
+                        dpMathObjects[x][y] = ParseResult(0, parsed(ObjectVariable(f.name), ParseContext(x, y)))
+                    }
                 }
             }
             // arbitrary math object
             if (y - x == 1) {
                 if (ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x]) || (tokens[x].endsWith("s") && ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x].substringBeforeLast("s")))) {
-                    dpMathObjects[x][y] = ParseResult(0, ParsedMathObject(ArbitraryMathObject(tokens[x]), ParseContext(x, y)))
+                    dpMathObjects[x][y] = ParseResult(0, parsed(ArbitraryMathObject(tokens[x]), ParseContext(x, y)))
                 }
             }
             // dfs
@@ -99,6 +110,18 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
                     } }
                 }
             }
+            if (dpStatements[x][y] != null) {
+                println("dpStatements[$x][$y] = ${dpStatements[x][y]}")
+            }
+            if (dpQuantities[x][y] != null) {
+                println("dpQuantities[$x][$y] = ${dpQuantities[x][y]}")
+            }
+            if (dpMathObjects[x][y] != null) {
+                println("dpMathObjects[$x][$y] = ${dpMathObjects[x][y]}")
+            }
+            if (dpIntents[x][y] != null) {
+                println("dpIntents[$x][$y] = ${dpIntents[x][y]}")
+            }
             dpStatements[x][y]
                 ?.let { res -> ParseResult(res.unusedWords + x + n - y, res.s)}
                 ?.let { res -> if (res.unusedWords < statementRes?.unusedWords ?: Int.MAX_VALUE) {
@@ -111,5 +134,6 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
                 } }
         }
     }
+    println()
     return Pair(statementRes, intentRes)
 }
