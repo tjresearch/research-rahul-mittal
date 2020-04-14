@@ -1,5 +1,5 @@
-sentence = "QUESTION: We will show that both sides of the equation count the number of ways to choose a subset of size $k$ from a set $S$ of size $n$"
-unusedWords = 5
+sentence = "question: we will show that both sides of the equation count the number of ways to choose a subset of size $k$ from a set $s$ of size $n$"
+unusedWords = 5 / 29
 intent = ParsedIntent(
     intent=Show(
         statement=ParsedStatement(
@@ -42,7 +42,7 @@ intent = ParsedIntent(
                                         mathObject=OfSize(
                                             obj=ParsedMathObject(
                                                 mathObject=ObjectVariable(
-                                                    name=S
+                                                    name=s
                                                 ),
                                                 context=ParseContext(
                                                     from=25,
@@ -115,7 +115,7 @@ intent = ParsedIntent(
                                         mathObject=OfSize(
                                             obj=ParsedMathObject(
                                                 mathObject=ObjectVariable(
-                                                    name=S
+                                                    name=s
                                                 ),
                                                 context=ParseContext(
                                                     from=25,
@@ -163,8 +163,8 @@ intent = ParsedIntent(
     )
 )
 
-sentence = "LEFT: The left hand side of the equation counts this by definition"
-unusedWords = 7
+sentence = "left: the left hand side of the equation counts this by definition"
+unusedWords = 7 / 12
 statement = ParsedStatement(
     statement=Equals(
         q1=ParsedQuantity(
@@ -192,8 +192,8 @@ statement = ParsedStatement(
     )
 )
 
-sentence = "RIGHT: Let $s$ be a fixed element"
-unusedWords = 3
+sentence = "right: let $s$ be a fixed element"
+unusedWords = 3 / 7
 statement = ParsedStatement(
     statement=DefineMathObject(
         defined=ParsedMathObject(
@@ -221,8 +221,8 @@ statement = ParsedStatement(
     )
 )
 
-sentence = "We will show that the right hand side counts the desired quantity by conditioning on whether $s$ is in the subset"
-unusedWords = 11
+sentence = "we will show that the right hand side counts the desired quantity by conditioning on whether $s$ is in the subset"
+unusedWords = 11 / 21
 intent = ParsedIntent(
     intent=Show(
         statement=ParsedStatement(
@@ -258,8 +258,8 @@ intent = ParsedIntent(
     )
 )
 
-sentence = "First, we will count how many subsets of size $k$ include $s$"
-unusedWords = 1
+sentence = "first, we will count how many subsets of size $k$ include $s$"
+unusedWords = 1 / 12
 intent = ParsedIntent(
     intent=Determine(
         quantity=ParsedQuantity(
@@ -307,8 +307,8 @@ intent = ParsedIntent(
     )
 )
 
-sentence = "Since such a subset includes $s$, there are $k - 1$ other elements in the subset, which must be chosen from the remaining $n - 1$ elements of $S$"
-unusedWords = 10
+sentence = "since such a subset includes $s$, there are $k - 1$ other elements in the subset, which must be chosen from the remaining $n - 1$ elements of $s$"
+unusedWords = 10 / 25
 statement = ParsedStatement(
     statement=Since(
         reason=ParsedStatement(
@@ -382,7 +382,7 @@ statement = ParsedStatement(
                     mathObject=RemainingElements(
                         of=ParsedMathObject(
                             mathObject=ObjectVariable(
-                                name=S
+                                name=s
                             ),
                             context=ParseContext(
                                 from=24,
@@ -417,11 +417,54 @@ statement = ParsedStatement(
     )
 )
 
-sentence = "Therefore there are 􏰀$(n - 1) >> (k - 1)$ such subsets"
-Empty sentence
+sentence = "therefore there are 􏰀$(n - 1) >> (k - 1)$ such subsets"
+unusedWords = 2 / 6
+statement = ParsedStatement(
+    statement=Equals(
+        q1=Amount(
+            obj=ParsedMathObject(
+                mathObject=ArbitraryMathObject(
+                    noun=subsets
+                ),
+                context=ParseContext(
+                    from=5,
+                    to=6
+                )
+            )
+        ),
+        q2=ParsedQuantity(
+            quantity=Combination(
+                n=Difference(
+                    left=Variable(
+                        name=n
+                    ),
+                    right=Constant(
+                        k=1
+                    )
+                ),
+                k=Difference(
+                    left=Variable(
+                        name=k
+                    ),
+                    right=Constant(
+                        k=1
+                    )
+                )
+            ),
+            context=ParseContext(
+                from=3,
+                to=4
+            )
+        )
+    ),
+    context=ParseContext(
+        from=1,
+        to=6
+    )
+)
 
-sentence = "Second, we will count how many subsets of size $k$ do not include $s$"
-unusedWords = 1
+sentence = "second, we will count how many subsets of size $k$ do not include $s$"
+unusedWords = 1 / 14
 intent = ParsedIntent(
     intent=Determine(
         quantity=ParsedQuantity(
@@ -469,8 +512,8 @@ intent = ParsedIntent(
     )
 )
 
-sentence = "Since the subset does not include $s$, all of its $k$ elements are chosen from the remaining $n - 1$ elements of $S$"
-unusedWords = 18
+sentence = "since the subset does not include $s$, all of its $k$ elements are chosen from the remaining $n - 1$ elements of $s$"
+unusedWords = 18 / 21
 statement = ParsedStatement(
     statement=Equals(
         q1=ParsedQuantity(
@@ -503,8 +546,8 @@ statement = ParsedStatement(
     )
 )
 
-sentence = "Therefore there are $(n - 1) >> k$ such subsets"
-unusedWords = 2
+sentence = "therefore there are $(n - 1) >> k$ such subsets"
+unusedWords = 2 / 6
 statement = ParsedStatement(
     statement=Equals(
         q1=Amount(
@@ -544,8 +587,8 @@ statement = ParsedStatement(
     )
 )
 
-sentence = "Since any subset of size $k$ either includes $s$ or does not (but not both), the total number of subsets is the sum of the counts in the two cases"
-unusedWords = 22
+sentence = "since any subset of size $k$ either includes $s$ or does not (but not both), the total number of subsets is the sum of the counts in the two cases"
+unusedWords = 22 / 30
 statement = ParsedStatement(
     statement=Contains(
         container=ParsedMathObject(

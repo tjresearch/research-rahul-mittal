@@ -9,8 +9,11 @@ data class ParsePosition<S>(
     val constructor: (TemplateParameters) -> S,
     val inTokens: Int,
     val unusedWords: Int,
-    val parameters: TemplateParameters
+    val parameters: TemplateParameters,
+    val parallelParameters: TemplateParameters
 )
+
+const val PLACEHOLDERS = "bcdeghjklmnopqrstuvwxyz"
 
 fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
         Pair<ParseResult<Statement>?, ParseResult<Intent>?> {
@@ -25,54 +28,60 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
     var statementRes: ParseResult<Statement>? = null
     var intentRes: ParseResult<Intent>? = null
 
+    fun context(from: Int, to: Int) = ParseContext(from, to, tokens.subList(from, to))
+
     for (x in n - 1 downTo 0) {
         for (y in x + 1..n) {
             // formula statement
             if (y - x == 3) {
-                if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i" && tokens[x + 1] == "is" && tokens[x + 2] == "true") {
-                    dpStatements[x][y] = ParseResult(0, parsed(FormulaStatement(tokens[x]), ParseContext(x, y)))
+                if (tokens[x].length == 1 && tokens[x] in PLACEHOLDERS && tokens[x + 1] == "is" && tokens[x + 2] == "true") {
+                    val s = FormulaStatement(tokens[x])
+                    dpStatements[x][y] = ParseResult(0, parsed(s, s, context(x, y)))
                 }
             }
             // formula
             if (y - x == 1) {
-                if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
-                    dpQuantities[x][y] = ParseResult(0, parsed(formulae.getValue(tokens[x][0]), ParseContext(x, y)))
+                if (tokens[x].length == 1 && tokens[x] in PLACEHOLDERS) {
+                    val s = formulae.getValue(tokens[x][0])
+                    dpQuantities[x][y] = ParseResult(0, parsed(s, s, context(x, y)))
                 }
             }
             // variable math object
             if (y - x == 1) {
-                if (tokens[x].length == 1 && tokens[x] != "a" && tokens[x] != "i") {
+                if (tokens[x].length == 1 && tokens[x] in PLACEHOLDERS) {
                     val f = formulae.getValue(tokens[x][0])
                     if (f is Variable) {
-                        dpMathObjects[x][y] = ParseResult(0, parsed(ObjectVariable(f.name), ParseContext(x, y)))
+                        val s = ObjectVariable(f.name)
+                        dpMathObjects[x][y] = ParseResult(0, parsed(s, s, context(x, y)))
                     }
                 }
             }
             // arbitrary math object
             if (y - x == 1) {
                 if (ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x]) || (tokens[x].endsWith("s") && ARBITRARY_MATH_OBJECT_WORDS.contains(tokens[x].substringBeforeLast("s")))) {
-                    dpMathObjects[x][y] = ParseResult(0, parsed(ArbitraryMathObject(tokens[x]), ParseContext(x, y)))
+                    val s = ArbitraryMathObject(tokens[x])
+                    dpMathObjects[x][y] = ParseResult(0, parsed(s, s, context(x, y)))
                 }
             }
             // dfs
             val stack = Stack<ParsePosition<*>>()
             for (template in STATEMENT_TEMPLATES) {
-                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS))
+                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS, EMPTY_PARAMETERS))
             }
             for (template in QUANTITY_TEMPLATES) {
-                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS))
+                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS, EMPTY_PARAMETERS))
             }
             for (template in MATH_OBJECT_TEMPLATES) {
-                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS))
+                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS, EMPTY_PARAMETERS))
             }
             for (template in INTENT_TEMPLATES) {
-                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS))
+                stack.push(ParsePosition(template.syntax, template.constructor, x, 0, EMPTY_PARAMETERS, EMPTY_PARAMETERS))
             }
             while (!stack.isEmpty()) {
                 val pos = stack.pop()
                 if (pos.inTokens == y || pos.syntax.isEmpty()) {
                     if (pos.inTokens == y && pos.syntax.isEmpty()) {
-                        when (val s = parsed(pos.constructor(pos.parameters), ParseContext(x, y))) {
+                        when (val s = parsed(pos.constructor(pos.parameters), pos.constructor(pos.parallelParameters), context(x, y))) {
                             is Statement -> if (pos.unusedWords < dpStatements[x][y]?.unusedWords ?: Int.MAX_VALUE) dpStatements[x][y] = ParseResult(pos.unusedWords, s)
                             is Quantity -> if (pos.unusedWords < dpQuantities[x][y]?.unusedWords ?: Int.MAX_VALUE) dpQuantities[x][y] = ParseResult(pos.unusedWords, s)
                             is MathObject -> if (pos.unusedWords < dpMathObjects[x][y]?.unusedWords ?: Int.MAX_VALUE) dpMathObjects[x][y] = ParseResult(pos.unusedWords, s)
@@ -94,7 +103,8 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
                                 inTokens = z,
                                 syntax = pos.syntax.subList(1),
                                 unusedWords = pos.unusedWords + it.unusedWords,
-                                parameters = pos.parameters.with(it.s, elem.id))) }
+                                parameters = pos.parameters.with(it.s, elem.id),
+                                parallelParameters = pos.parallelParameters.with(parallel(it.s), elem.id))) }
                         }
                         is Varying -> for (option in elem.options) {
                             stack.push(pos.copy(syntax = option + pos.syntax.subList(1)))
@@ -110,7 +120,7 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
                     } }
                 }
             }
-            if (dpStatements[x][y] != null) {
+            /*if (dpStatements[x][y] != null) {
                 println("dpStatements[$x][$y] = ${dpStatements[x][y]}")
             }
             if (dpQuantities[x][y] != null) {
@@ -121,7 +131,7 @@ fun parseStatementOrIntent(tokens: List<String>, formulae: Map<Char, Quantity>):
             }
             if (dpIntents[x][y] != null) {
                 println("dpIntents[$x][$y] = ${dpIntents[x][y]}")
-            }
+            }*/
             dpStatements[x][y]
                 ?.let { res -> ParseResult(res.unusedWords + x + n - y, res.s)}
                 ?.let { res -> if (res.unusedWords < statementRes?.unusedWords ?: Int.MAX_VALUE) {

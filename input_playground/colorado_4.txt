@@ -1,0 +1,24 @@
+QUESTION: We will show that both sides of the equation count the number of ways to choose a subset of a set $S$ of $n$ elements.
+
+RIGHT: When creating a subset of $S$, for each element of $S$, there are $2$ options:
+to include it or not to include it.
+Since we make this choice $n$ times (once for each element),
+there are a total of $2 ^ n$ possible sequences of choices.
+Each sequence gives exactly one subset,
+and every subset results from exactly one sequence.
+Therefore there are a total of $2^n$ subsets of $S$.
+Therefore the right hand side counts the desired quantity.
+
+LEFT: We will show that the left hand side counts the desired quantity
+by conditioning on the size of the subset.
+The possible sizes of subsets of $S$ are 0 ≤ k ≤ n.
+By definition, there are 􏰀$n >> k$􏰁 subsets of size $k$.
+Therefore the total number of subsets is the sum on the left hand side.
+
+9 sts
+
+(4,5) => 6
+(6,7,8) => 9
+9 => 10
+
+(14,15) => 16

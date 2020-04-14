@@ -1,0 +1,42 @@
+QUESTION: We will show that both sides of the equation count the number of ways to choose a subset of size $k$ from a set $S$ of size $n$.
+LEFT: The left hand side of the equation counts this by definition.
+RIGHT: Let $s$ be a fixed element.
+We will show that the right hand side counts the desired quantity by conditioning on whether $s$ is in the subset.
+
+First, we will count how many subsets of size $k$ include $s$.
+Since such a subset includes $s$, there are $k - 1$ other elements in the subset, which must be chosen from the remaining $n - 1$ elements of $S$.
+Therefore there are 􏰀$(n - 1) >> (k - 1)$ such subsets.
+
+Second, we will count how many subsets of size $k$ do not include $s$.
+Since the subset does not include $s$, all of its $k$ elements are chosen from the remaining $n - 1$ elements of $S$.
+Therefore there are $(n - 1) >> k$ such subsets.
+
+Since any subset of size $k$ either includes $s$ or does not (but not both), the total number of subsets is the sum of the counts in the two cases.
+
+7 => 8
+11 => 12
+
+6 sts
+
+"Since such a subset includes $s$, there are $k - 1$ other elements in the subset"
+the size of a subset of size $k$ that includes $s$, but without $s$, is $k - 1$.
+
+"which must be chosen from the remaining $n - 1$ elements of $S$"
+a subset of size $k$ that includes $s$, but without $s$, is equivalent to a subset of size $k$ of a set of size $n - 1$ = T \ {s}.
+
+
+the other one:
+a subset of size $k$ that does not include $s$, is equivalent to a subset of size $k$ of a set of size $n - 1$ = T \ {s}.
+
+Since any subset of size $k$ either includes $s$ or does not (but not both), the total number of subsets is the sum of the counts in the two cases.
+disjoint_bij
+
+
+
+
+3.2.5 Cardinalities of Subsets
+We wish to write down rules about cardinalities of subsets of types, using Ensemble and sig. Given a list of elements that makes up a subset, if the list has no duplicates then the cardinality of this subset is equal to the length of the list.
+Theorem cardinal of list A (l : list A) : NoDup l → |sig (list to subset l)| = length l. Corollary subset length match T (l l’ : list T ) :
+l ∼=l’ →NoDupl →NoDupl’ →lengthl =lengthl’.
+The notation (l ∼= l’) here expands to (list to subset l) = (list to subset l’). Next we
+have several basic lemmas about empty, nonempty, and singleton sets.

@@ -9,7 +9,6 @@ open class Statement: MathThing()
 data class Not(val negated: Statement): Statement()
 data class FormulaStatement(val placeholder: String): Statement()
 data class Each(val obj: MathObject, val condition: (MathObject) -> Statement): Statement()
-data class And(val statement1: Statement, val statement2: Statement): Statement()
 
 open class Quantity: MathThing()
 
@@ -99,6 +98,12 @@ sealed class MetaStatement: Statement()
 data class Since(val reason: Statement, val conclusion: Statement): MetaStatement()
 data class DefineQuantity(val defined: Quantity, val target: Quantity): MetaStatement()
 data class DefineMathObject(val defined: MathObject, val target: MathObject): MetaStatement()
+data class HangingTherefore(val conclusion: Statement): MetaStatement()
+data class And(val statement1: Statement, val statement2: Statement): MetaStatement()
+
+data class By(val concept: ByConcept, val conclusion: Statement): MetaStatement()
+
+enum class ByConcept { DEFINITION, MULTIPLICATION_PRINCIPLE }
 
 // Variable MathObject
 

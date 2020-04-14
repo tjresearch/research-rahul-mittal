@@ -1,0 +1,20 @@
+QUESTION: We will show that both sides of the equation count the number of ways to choose a committee of $k$ students from a student body of $n$ students, where, in addition, a subcomittee of $m$ of the $k$ students form the executive committee.
+
+LEFT: We will describe the counting process.
+First, we choose $k$ students from the student body of $n$ students, to form the committee.
+There are $n >> k$ ways to do this.
+Then we choose $m$ students from among those $k$ to form the subcommittee.
+There are 􏰀$k >> m$􏰁 ways to do this.
+By the multiplication principle, the left hand side counts the desired quantity.
+
+RIGHT: We will describe the counting process.
+First, we choose $m$ students from the student body of $n$ students, to form the executive committee.
+There are 􏰀$n >> m$􏰁 ways to do this.
+Then we choose $k - m$ of the remaining portion of the student body (which consists of $n - m$ students), to form the non-executive part of the committee.
+There are $(n - m) >> (k - m)$ ways to do this.
+By the multiplication principle, the right hand side counts the desired quantity.
+
+6 sts
+
+(5,7) => 8
+(12,14) => 15

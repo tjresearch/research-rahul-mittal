@@ -1,19 +1,106 @@
 package us.tlatoani.comboprover
 
 import edu.stanford.nlp.pipeline.StanfordCoreNLP
+import us.tlatoani.comboprover.better_parser.PLACEHOLDERS
 import us.tlatoani.comboprover.better_parser.ParseResult
 import us.tlatoani.comboprover.better_parser.parseStatementOrIntent
 import us.tlatoani.comboprover.better_parser.parseSyntax
 import java.io.File
-import java.io.PrintWriter
 import java.util.*
 
 val SAMPLE_PROOF_FILENAME = "sample_proof_4.txt"
 lateinit var pipeline: StanfordCoreNLP
 
-const val PLACEHOLDERS = "bcdeghjklmnopqrstuvwxyz"
-
 fun main() {
+    print("Enter filename of plaintext proof: input/")
+    val inFilename = "input/" + readLine()!!
+    //print("Enter desired output filename: output/")
+    //val outFilename = "output/" + readLine()!!
+    val scanner = Scanner(File(inFilename))
+    val proofJoiner = StringJoiner(" ")
+    while (scanner.hasNext()) {
+        val line = scanner.nextLine().trim()
+        if (line.isEmpty()) {
+            proofJoiner.add("\n")
+        } else {
+            proofJoiner.add(line)
+        }
+    }
+    val proof = proofJoiner.toString().replace(" \n ", "\n")
+    val sentences = proof.split(".").toMutableList()
+    data class Output(val sentence: String, val totalTokens: Int, val res: Pair<ParseResult<Statement>?, ParseResult<Intent>?>)
+    val output = mutableListOf<Output>()
+    val formulaParser = FormulaParser()
+    val tokenizedSentences = mutableListOf<List<String>>()
+    for (rawSentence in sentences) {
+        val sentence = rawSentence.trim().toLowerCase()
+        if (sentence.isNotEmpty()) {
+            var k = 0
+            val formulae = mutableMapOf<Char, Quantity>()
+            val tokens = mutableListOf<String>()
+            var token = ""
+            //val builder = StringBuilder()
+            var j = 0
+            while (j < sentence.length) {
+                when {
+                    sentence[j] == '$' -> {
+                        if (token.isNotEmpty()) {
+                            tokens.add(token)
+                            token = ""
+                        }
+                        tokens.add(PLACEHOLDERS[k] + "")
+                        val end = sentence.indexOf('$', j + 1)
+                        formulae[PLACEHOLDERS[k]] = formulaParser.parseFormula(
+                            sentence.substring(j + 1, end))
+                        j = end + 1
+                        k++
+                    }
+                    sentence[j].isLetterOrDigit() -> {
+                        token += sentence[j]
+                        j++
+                    }
+                    sentence[j].isWhitespace() -> {
+                        if (token.isNotEmpty()) {
+                            tokens.add(token)
+                            token = ""
+                        }
+                        j++
+                    }
+                    ",.:;.?!".contains(sentence[j]) -> {
+                        if (token.isNotEmpty()) {
+                            tokens.add(token)
+                            token = ""
+                        }
+                        tokens.add(sentence[j].toString())
+                        j++
+                    }
+                    else -> j++
+                }
+            }
+            if (token.isNotEmpty()) {
+                tokens.add(token)
+            }
+            //println("bosh")
+            //println("tokens = $tokens")
+            //println("formulae = $formulae")
+            tokenizedSentences.add(tokens)
+            output.add(Output(sentence, tokens.size, parseStatementOrIntent(tokens, formulae)))
+        }
+    }
+    println("output = $output")
+    val sentenceStatements = mutableListOf<Statement>()
+    val tokenizations = mutableListOf<List<String>>()
+    for (j in 0 until output.size) {
+        val p = output[j]
+        if (p.res.first != null && p.res.first!!.unusedWords < p.res.second?.unusedWords ?: Int.MAX_VALUE) {
+            sentenceStatements.add(p.res.first!!.s)
+            tokenizations.add(tokenizedSentences[j])
+        }
+    }
+    //getStatementsAndImplications(sentenceStatements, tokenizations)
+}
+
+fun main6() {
     print("Enter filename of plaintext proof: input/")
     val inFilename = "input/" + readLine()!!
     print("Enter desired output filename: output/")
@@ -30,48 +117,66 @@ fun main() {
     }
     val proof = proofJoiner.toString().replace(" \n ", "\n")
     val sentences = proof.split(".").toMutableList()
-    val output = mutableListOf<Pair<String, Pair<ParseResult<Statement>?, ParseResult<Intent>?>>>()
+    data class Output(val sentence: String, val totalTokens: Int, val res: Pair<ParseResult<Statement>?, ParseResult<Intent>?>)
+    val output = mutableListOf<Output>()
     val formulaParser = FormulaParser()
     for (rawSentence in sentences) {
-        val sentence = rawSentence.trim()
+        val sentence = rawSentence.trim().toLowerCase()
         if (sentence.isNotEmpty()) {
             var k = 0
             val formulae = mutableMapOf<Char, Quantity>()
-            val builder = StringBuilder()
+            val tokens = mutableListOf<String>()
+            var token = ""
+            //val builder = StringBuilder()
             var j = 0
             while (j < sentence.length) {
-                if (sentence[j] == '$') {
-                    builder.append(PLACEHOLDERS[k])
-                    val end = sentence.indexOf('$', j + 1)
-                    formulae[PLACEHOLDERS[k]] = formulaParser.parseFormula(
-                        sentence.substring(j + 1, end))
-                    j = end + 1
-                    k++
-                } else {
-                    builder.append(sentence[j])
-                    j++
+                when {
+                    sentence[j] == '$' -> {
+                        if (token.isNotEmpty()) {
+                            tokens.add(token)
+                            token = ""
+                        }
+                        tokens.add(PLACEHOLDERS[k] + "")
+                        val end = sentence.indexOf('$', j + 1)
+                        formulae[PLACEHOLDERS[k]] = formulaParser.parseFormula(
+                            sentence.substring(j + 1, end))
+                        j = end + 1
+                        k++
+                    }
+                    sentence[j].isLetterOrDigit() -> {
+                        token += sentence[j]
+                        j++
+                    }
+                    sentence[j].isWhitespace() -> {
+                        if (token.isNotEmpty()) {
+                            tokens.add(token)
+                            token = ""
+                        }
+                        j++
+                    }
+                    else -> j++
                 }
             }
+            if (token.isNotEmpty()) {
+                tokens.add(token)
+            }
             //println("bosh")
-            val tokens = builder.toString().replace(Regex("[\\.,;:]"), "").toLowerCase().split(" ")
             //println("tokens = $tokens")
             //println("formulae = $formulae")
-            output.add(Pair(sentence, parseStatementOrIntent(tokens, formulae)))
+            output.add(Output(sentence, tokens.size, parseStatementOrIntent(tokens, formulae)))
         }
     }
     val out = StringBuilder()
     for (p in output) {
-        val sentence = p.first
-        val parsed = p.second
-        out.appendln("sentence = \"$sentence\"")
-        if (parsed.first == null && parsed.second == null) {
+        out.appendln("sentence = \"${p.sentence}\"")
+        if (p.res.first == null && p.res.second == null) {
             out.appendln("Empty sentence")
-        } else if (parsed.first?.unusedWords ?: Int.MAX_VALUE < parsed.second?.unusedWords ?: Int.MAX_VALUE) {
-            out.appendln("unusedWords = ${parsed.first!!.unusedWords}")
-            out.appendln("statement = ${dataStringWithNewlines(parsed.first!!.s.toString())}")
+        } else if (p.res.first?.unusedWords ?: Int.MAX_VALUE < p.res.second?.unusedWords ?: Int.MAX_VALUE) {
+            out.appendln("unusedWords = ${p.res.first!!.unusedWords} / ${p.totalTokens}")
+            out.appendln("statement = ${dataStringWithNewlines(p.res.first!!.s.toString())}")
         } else {
-            out.appendln("unusedWords = ${parsed.second!!.unusedWords}")
-            out.appendln("intent = ${dataStringWithNewlines(parsed.second!!.s.toString())}")
+            out.appendln("unusedWords = ${p.res.second!!.unusedWords} / ${p.totalTokens}")
+            out.appendln("intent = ${dataStringWithNewlines(p.res.second!!.s.toString())}")
         }
         out.appendln()
     }

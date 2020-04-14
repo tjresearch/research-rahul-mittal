@@ -1,2 +1,2 @@
-there are 􏰀$n$ subsets.
-there are $n$ subsets.
+there are 􏰀$3$ subsets.
+there are $3$ subsets.

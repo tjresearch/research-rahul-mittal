@@ -1,0 +1,14 @@
+QUESTION: We will show that both sides of the equation count the number of ways to choose a non-empty subset of the set S = {1, 2, . . . , n}.
+
+RIGHT: As in the last proof, the number of subsets of $S$ is $2 ^ n$.
+Exactly one of these is empty, so there are $(2 ^ n) − 1$ non-empty subsets.
+
+LEFT: We will show that the left hand side counts the desired quantity by conditioning on the largest element of the subset.
+Every non-empty subset has a largest element $k$ where 1 ≤ k ≤ n.
+Let 1 ≤ k ≤ n.
+We will count the number of subsets of $S$ having largest element $k$.
+Such a subset includes k and does not include $k + 1, . . . , n$.
+Therefore to specify such a subset we must decide k − 1 choices:
+for each element of ${1, 2, . . . , k − 1}$, we must decide to include or not include that element.
+Therefore there are $2 ^ (k - 1)$ such subsets.
+Summing over all possible k, we see that the left hand side counts the desired quantity.

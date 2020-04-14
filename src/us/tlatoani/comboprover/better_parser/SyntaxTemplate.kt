@@ -11,7 +11,7 @@ val STATEMENT_TEMPLATES = listOf<SyntaxTemplate<Statement>>(
     template("%xn1% can be matched up with %xn2% in %qq1% ways") { Equals(Amount(Matching(it.xn(1), it.xn(2))), it.qq(1)) },
     template("%qq1% (is|are) %qq2%") { Equals(it.qq(1), it.qq(2)) },
     template("each %xn1% contains %xn2%") { Each(it.xn(1)) { xn -> Contains(xn, it.xn(2)) } },
-    template("to choose %xn1% we can choose %xn2%") { Equals(Amount(Choice(it.xn(1))), Amount(Choice(it.xn(2)))) },
+    template("to choose %xn1% we can [instead] choose %xn2%") { Equals(Amount(Choice(it.xn(1))), Amount(Choice(it.xn(2)))) },
     template("there are %qq1% %xn1%") { Equals(Amount(it.xn(1)), it.qq(1)) },
     template("%qq1% counts %qq2%") { Equals(it.qq(1), it.qq(2)) },
     template("%xn1% contains %xn2%") { Contains(it.xn(1), it.xn(2)) },
@@ -23,7 +23,11 @@ val STATEMENT_TEMPLATES = listOf<SyntaxTemplate<Statement>>(
     template("both sides of the equation count %qq1%") { And(Equals(SideOfEquation(Side.LEFT), it.qq(1)), Equals(SideOfEquation(Side.RIGHT), it.qq(1))) },
     // meta
     template("since %st1% %st2%") { Since(it.st(1), it.st(2)) },
-    template("let %xn1% be %xn2%") { DefineMathObject(it.xn(1), it.xn(2)) }
+    template("let %xn1% be %xn2%") { DefineMathObject(it.xn(1), it.xn(2)) },
+    template("therefore %st1%") { HangingTherefore(it.st(1)) },
+    template("(by definition %st1%|%st1% by definition)") { By(ByConcept.DEFINITION, it.st(1)) },
+    template("(by multiplication principle %st1%|%st1% by multiplication principle)") { By(ByConcept.MULTIPLICATION_PRINCIPLE, it.st(1)) },
+    template("%st1% so %st2%") { Since(it.st(1), it.st(2)) }
 )
 val QUANTITY_TEMPLATES = listOf<SyntaxTemplate<Quantity>>(
     template("number of %xn1%") { Amount(it.xn(1)) },
@@ -31,8 +35,8 @@ val QUANTITY_TEMPLATES = listOf<SyntaxTemplate<Quantity>>(
     template("amount") { HangingAmount(Unit) },
     template("at most %qq1%") { Bounded(Infinity(-1), it.qq(1)) },
     template("at least %qq1%") { Bounded(it.qq(1), Infinity(1)) },
-    template("right [hand] side") { SideOfEquation(Side.RIGHT) },
-    template("left [hand] side") { SideOfEquation(Side.LEFT) },
+    template("[sum on] right [hand] side") { SideOfEquation(Side.RIGHT) },
+    template("[sum on] left [hand] side") { SideOfEquation(Side.LEFT) },
     template("(this|desired quantity)") { HangingAmount(Unit) },
     template("how many %xn1% include %xn2%") { Amount(SubjectToCondition(it.xn(1)) { xn -> Contains(xn, it.xn(2)) }) },
     template("how many %xn1% do not include %xn2%") { Amount(SubjectToCondition(it.xn(1)) { xn -> Not(Contains(xn, it.xn(2))) }) },
