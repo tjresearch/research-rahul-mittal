@@ -11,7 +11,7 @@ import java.util.*
 val SAMPLE_PROOF_FILENAME = "sample_proof_4.txt"
 lateinit var pipeline: StanfordCoreNLP
 
-fun main() {
+fun main7() {
     print("Enter filename of plaintext proof: input/")
     val inFilename = "input/" + readLine()!!
     //print("Enter desired output filename: output/")
@@ -100,7 +100,7 @@ fun main() {
     //getStatementsAndImplications(sentenceStatements, tokenizations)
 }
 
-fun main6() {
+fun main() {
     print("Enter filename of plaintext proof: input/")
     val inFilename = "input/" + readLine()!!
     print("Enter desired output filename: output/")

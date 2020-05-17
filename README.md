@@ -30,9 +30,9 @@ This project is not currently in a state to produce its final intended output.
 
 To run this project in its current state, assuming you installed it using IntelliJ, open the file `ComboProver.kt`, right click on the `main` function, and click 'Run us.tlatoani.combopro...'. You will be prompted to provide some sort of input, and will be provided with some sort of output, both of which will vary before the project reaches completion.
 
-In the project's current state, you will need to write a combinatorial proof in a plaintext file, then provide the path of the file containing the proof as input. You will also need to prove the path of the file in which you would like output to be stored. The output will consist of each statement considered by the program to be contained in your proof decomposed into a structure according to the mathematical terms it uses.
+In the project's current state, you will need to write a combinatorial proof in a plaintext file that you place into the `input` folder, then provide the name (including the extension) of that file containing the proof as input. You will also need to prove the name of the file in which you would like output to be stored. That output file will be stored in the `output` folder and will consist of each statement considered by the program to be contained in your proof decomposed into a structure according to the mathematical terms it uses.
 
-You may find sample input proofs in the folder named `input`.
+You may find sample input proofs in the `input` folder.
 ## Formula Syntax
 
 Assuming that you write formulae in your input proof, you will need to use a certain syntax in order for the formulae to be understood by the program, which is described below:
