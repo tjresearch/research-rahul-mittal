@@ -73,7 +73,7 @@ class FormulaParser {
         while (pin.hasNextLine()) {
             val line = pin.nextLine()
             println("Found a line over here: $line")
-            if (line.contains("Ok, modules")) {
+            if (line.contains("Ok") && line.contains("module")) {
                 break
             }
         }
@@ -85,7 +85,7 @@ class FormulaParser {
         //println("ohayo $formula")
         val prepared = prepareFormula(formula)
         //println("PREPÁRATTÈ $prepared")
-        pout.println("putStrLn $ json $ ${prepared}")
+        pout.println("putStrLn $ json $ $prepared")
         pout.flush()
         //println("gozaimasu")
         /*while (pin.hasNext()) {
